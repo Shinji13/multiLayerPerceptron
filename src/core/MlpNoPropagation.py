@@ -6,9 +6,9 @@ class multiLayer_Perceptron:
         self.numberOfFeatures=numberOfFeatures
         self.numberOfHiddenNeurons=numberOfHiddenNeurons
         self.numberOutputs=numberOfOutputs
+        self.learningRate=learningRate
         self.hiddenLayer=np.zeros(shape=(numberOfHiddenNeurons,numberOfFeatures+1))
         self.outPutLayer=np.zeros(shape=(numberOfOutputs,numberOfHiddenNeurons+1))
-        self.learningRate=learningRate
     def print(self):
         print("hidden layer weights :",self.hiddenLayer)
         print("output layer weights :",self.outPutLayer)
