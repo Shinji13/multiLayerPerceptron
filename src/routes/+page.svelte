@@ -23,11 +23,11 @@
   ];
   const settings={
     networkLayers:[5,10,5],
-    canvas:null,
+    canvas:{width:0,height:0},
     context:null,    
     networkNeurons:[],
     lastAnimateTime:0,
-    duration:550
+    duration:200
   }
   let currentDrawnNeuron={
     layer:0,
@@ -36,7 +36,7 @@
   let weightsPositions =[]
   onMount(()=>{
       settings.lastAnimateTime=new Date().getTime()
-      settings.canvas.width=window.innerWidth*0.9
+      settings.canvas.width=window.innerWidth*0.9      
       settings.canvas.height=window.innerHeight*0.9
       settings.context=settings.canvas.getContext("2d")
       let layerWidth=settings.canvas.width/settings.networkLayers.length
@@ -58,7 +58,6 @@
          let currentTime=new Date().getTime()
          let delay=currentTime-settings.lastAnimateTime
          if(delay>=settings.duration){
-           settings.duration-=68
            settings.lastAnimateTime=currentTime
            drawNeurons()
          }
@@ -67,7 +66,7 @@
         let targetX=settings.networkNeurons[currentDrawnNeuron.layer-1][0].x
         if(targetX-weightsPositions[0][0].x<0.0000000001){
              weightsPositions.length=0             
-             settings.duration=550
+             settings.duration=settings.duration
         }
         weightsPositions.forEach((neuronWeights,index)=>{         
             let start=settings.networkNeurons[currentDrawnNeuron.layer-2][index]
@@ -88,7 +87,7 @@
       let layer=settings.networkNeurons[layerIndex]
       let currentNeuronPosition=layer[currentDrawnNeuron.neuronIndex]
       let color=colors[layerIndex]
-      drawCircle(settings.context,currentNeuronPosition.x,currentNeuronPosition.y,20,color)        
+      drawCircle(settings.context,currentNeuronPosition.x,currentNeuronPosition.y,25,color)        
       currentDrawnNeuron.neuronIndex+=1
       if(currentDrawnNeuron.neuronIndex==layer.length){
         currentDrawnNeuron.layer+=1
@@ -107,7 +106,7 @@
   }
 </script>
 
-<canvas id="canvas" bind:this={settings.canvas}/>
+<canvas id="canvas" bind:this={settings.canvas} />
 <style>
     #canvas{
         width: 90%;

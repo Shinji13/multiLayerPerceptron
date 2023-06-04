@@ -1,5 +1,7 @@
 {
 	"useTabs": true,
+	"embeddedLanguageFormatting": "auto",
+	"svelteIndentScriptAndStyle": true	,
 	"singleQuote": true,
 	"trailingComma": "none",
 	"printWidth": 100,

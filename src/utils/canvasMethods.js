@@ -23,3 +23,7 @@ export function randomColor(colorArray){
     let randomIndex=Math.floor(Math.random()*colorArray.length)
     return colorArray[randomIndex]
 }
+
+export function calculateNeuronRadius(canvasHeight,numberOfNeurons){
+   return (20*(canvasHeight/numberOfNeurons))/(586/10)
+}
