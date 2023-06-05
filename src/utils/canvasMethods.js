@@ -25,5 +25,17 @@ export function randomColor(colorArray){
 }
 
 export function calculateNeuronRadius(canvasHeight,numberOfNeurons){
-   return (20*(canvasHeight/numberOfNeurons))/(586/10)
+   return Math.min((12*(canvasHeight/numberOfNeurons))/(586/10),20)
+}
+
+export function calculateTextSize(canvasHeight,numberOfNeurons){
+   return Math.min((16*(canvasHeight/numberOfNeurons))/(586/10),18)
+}
+
+export function delayToDrawNeuron(settings){
+      let currentTime=new Date().getTime()
+      let delay=currentTime-settings.lastAnimateTime
+      if(delay<settings.duration)return false
+      settings.lastAnimateTime=currentTime
+      return true      
 }
