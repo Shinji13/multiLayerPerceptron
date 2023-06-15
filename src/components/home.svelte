@@ -5,14 +5,6 @@
 <div id="home">
 	<div class="navbar">
 		<div class="logo" />
-		<div class="sections">
-			<ul>
-				<li>Home</li>
-				<li>What ?</li>
-				<li>Contact</li>
-			</ul>
-			<button>Login</button>
-		</div>
 	</div>
 	<div class="body">
 		<div class="left-side">
@@ -80,7 +72,7 @@
 
 				& button {
 					width: 8rem;
-					height: 2rem;
+					height: 2.5rem;
 					display: flex;
 					align-items: center;
 					letter-spacing: 0.5px;
@@ -97,14 +89,18 @@
 					background: linear-gradient(
 						to right,
 						var(--secondary-color),
-						rgb(126, 163, 231),
+						rgb(12, 78, 199),
 						var(--primary-color)
 					);
-					border-radius: 24px;
+					border-radius: 4px;
 					border: none;
-
 					&:hover {
-						background: linear-gradient(to right, var(--primary-color), var(--primary-color));
+						background: linear-gradient(
+							to right,
+							var(--primary-color),
+							rgb(204, 217, 245),
+							var(--secondary-color)
+						);
 						color: var(--secondary-color);
 					}
 				}
@@ -131,6 +127,7 @@
 			& .right-side {
 				width: 100%;
 				height: 65vh;
+				overflow: hidden;
 			}
 
 			& .left-side {
@@ -148,7 +145,8 @@
 						to right,
 						var(--secondary-color),
 						var(--text-color),
-						var(--primary-color)
+						var(--primary-color),
+						var(--secondary-color)
 					);
 					background-size: 200%;
 					background-clip: text;

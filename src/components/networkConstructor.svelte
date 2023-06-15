@@ -5,6 +5,8 @@
 		drawLine,
 		calculateNeuronRadius,
 		delayToDrawNeuron,
+		writeText,
+		calculateTextSize,
 		drawArc,
 		createGradient
 	} from '../utils/canvasMethods';
@@ -13,21 +15,18 @@
 		{
 			color: '#161616',
 			neuronsNumber: 10,
-			values: [1, 3, 1.4, 3.5, 2.3],
 			strokeColor: 'white',
 			lineColors: ['#612458', 'white']
 		},
 		{
 			color: '#161616',
 			neuronsNumber: 5,
-			values: [2, 3, 3.4, 3.5, 2.7],
 			strokeColor: 'white',
 			lineColors: ['#bbc3ff', '#1352b8']
 		},
 		{
 			color: '#161616',
 			neuronsNumber: 3,
-			values: [1, 3, 1.4, 3.5, 2.3],
 			strokeColor: 'white'
 		}
 	];
@@ -90,6 +89,21 @@
 		requestAnimationFrame(draw);
 	}
 
+	function drawText(currentNeuronPosition, radius) {
+		let layer = networkLayers[currentDrawnLayer];
+		if (layer.values) {
+			let fontSize = calculateTextSize(settings.canvas.height, layer.neuronsNumber);
+			writeText(
+				settings.context,
+				layer.values[currentDrawnNeuron],
+				currentNeuronPosition.x - radius,
+				currentNeuronPosition.y - radius - 5,
+				'white',
+				`${fontSize}px sans-serif`
+			);
+		}
+	}
+
 	function drawEges() {
 		let targetX = networkLayers[currentDrawnLayer - 1].neuronsPositions[0].x;
 		let radius = calculateNeuronRadius(
@@ -123,7 +137,7 @@
 		let layer = networkLayers[layerIndex];
 		let currentNeuronPosition = layer.neuronsPositions[currentDrawnNeuron];
 		let radius = calculateNeuronRadius(settings.canvas.height, layer.neuronsNumber);
-		//let fontSize = calculateTextSize(settings.canvas.height, layer.neuronsNumber);
+		drawText(currentNeuronPosition, radius);
 		drawArc(
 			settings.context,
 			currentNeuronPosition.x,
@@ -141,14 +155,6 @@
 			radius,
 			layer.color
 		);
-		// writeText(
-		// 	settings.context,
-		// 	layer.values[currentDrawnNeuron],
-		// 	currentNeuronPosition.x - radius,
-		// 	currentNeuronPosition.y - radius - 5,
-		// 	'white',
-		// 	`${fontSize}px sans-serif`
-		// );
 		currentDrawnNeuron += 1;
 		if (currentDrawnNeuron == layer.neuronsNumber) {
 			currentDrawnLayer += 1;
