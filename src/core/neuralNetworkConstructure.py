@@ -1,49 +1,68 @@
 import numpy as np
 from neuralMath import Neural_Network_Math
-
+from NeuralGraph import *
 
 class neural_Network:
-     def __init__(self,networkStructure,mode):
+     def __init__(self,networkStructure,mode,activationFunction):
           # mode is either multilabel-classification , unique-classification or regression ## activation is either sigmoid or Relu
-          self.math=Neural_Network_Math()
-          self.activationFunction=np.vectorize(self.math.ReLu) 
+          self.activationFunction=activationFunction
           self.mode=mode
           self.networkStructure=[]
           for i in range(1,len(networkStructure)):
                currentWeights=np.random.randn(networkStructure[i],networkStructure[i-1]+1)
                self.networkStructure.append(currentWeights) 
-#      def CalculateOutputs(self,previousLayerOutputs):
-#             outputsBeforeActiviation=np.dot(self.networkStructure[-1],previousLayerOutputs)             
-#             if self.mode==0:
-#                   return outputsBeforeActiviation
-#             elif self.mode==1:
-#                 matrixSigmoid=np.vectorize(self.math.Sigmoid)
-#                 resualtAfterActiviation=matrixSigmoid(outputsBeforeActiviation)
-#                 return resualtAfterActiviation
-#             else :
-#                   return self.math.SoftMax(outputsBeforeActiviation)                   
-#     def extractOutputs(self,cache):
-# #            batchOutputs=[]    
-# #            for sampleOutPut in cache:
-# #                  batchOutputs.append(sampleOutPut[-1])
-# #            return batchOutputs
-#  def calculateCost(self,batchOutputs,labels):
-#            if self.mode==0:
-#               return self.math.Loss_SSR(batchOutputs,labels)
-#            else :
-#               return self.math.Loss_CrossEntropy(batchOutputs,labels)
-     def feedForward(self,input):
-            outputsArray=[]
-            currentInputArray=np.insert(input,0,1)    
-            currentInputMatrix=np.asmatrix(currentInputArray).transpose()        
+     def raw_Calculation(self,graph,input,index):
+          network_params=Layer_Parameters(index,self.networkStructure[index])
+          raw_output=Raw_Layer_Outputs(index+1)
+          raw_output.forward_Pass(input,network_params)  
+          graph.addNode(raw_output,[input,network_params])    
+          return raw_output
+     
+     def activation_Calculation(self,graph,raw,index):
+          activation_Object=ReLu_Matrix(index+1) if self.activationFunction==0 else SoftPlus(index+1)
+          activation_Object.forward_Pass(raw)
+          graph.addNode(activation_Object,[raw])
+          return activation_Object
+     
+     def output_calculation(self,previous_output,graph):           
+           layer=len(self.networkStructure)-1
+           raw=self.raw_Calculation(graph,previous_output,layer)
+           if self.mode==0:
+                 return raw
+           elif self.mode==1:
+                 sig=Sigmoid_Matrix(layer+1)
+                 sig.forward_Pass(raw)
+                 graph.addNode(sig,[raw])
+                 return sig
+           else:
+                 softmax=Softmax_matrix(layer+1)
+                 softmax.forward_Pass(raw)
+                 graph.addNode(softmax,[raw])
+                 return softmax
+           
+     def loss_calculation(self,graph,network_output,labels):
+           layer=len(self.networkStructure)   
+           labels_matrix=Net_Inputs(layer,labels)
+           if self.mode==0:
+                 ssr_loss=Sum_Squared_Residuals(layer)
+                 ssr_loss.forward_Pass(labels_matrix,network_output)
+                 graph.addNode(ssr_loss,[labels_matrix,network_output])
+                 return ssr_loss
+           else :
+                 cross_loss=Cross_Entropy(layer)
+                 cross_loss.forward_Pass(labels_matrix,network_output)
+                 graph.addNode(cross_loss,[labels_matrix,network_output])
+                 return cross_loss
+           
+     def feedForward(self,input,labels):
+            feed_graph=Neural_Graph()
+            currentInputArray=Net_Inputs(0,input)               
             for i in range(0,len(self.networkStructure)-1):
-                resualtBeforeActiviation=np.dot(self.networkStructure[i],currentInputMatrix)                     
-                resualtAfterActiviation=self.activationFunction(resualtBeforeActiviation)
-                outputsArray.append(np.asarray(resualtAfterActiviation).ravel())
-                currentInputMatrix=np.insert(resualtAfterActiviation,0,1,axis=0) 
-            lastLayerOutput=self.CalculateOutputs(currentInputMatrix)                           
-            outputsArray.append(np.asarray(lastLayerOutput).ravel())
-            return outputsArray           
+                raw_output=self.raw_Calculation(feed_graph,currentInputArray,i)                                                           
+                currentInputArray=self.activation_Calculation(feed_graph,raw_output,i)
+            network_output=self.output_calculation(currentInputArray,feed_graph)
+            loss=self.loss_calculation(feed_graph,network_output,labels)
+            return (loss,feed_graph)
      def train(self,learningRate,costThreshold,trainingBatch,labels,iterations):
            lastCost=-1
            for i in range(0,iterations):
@@ -60,6 +79,9 @@ class neural_Network:
          
 
 
-net=neural_Network([2,2,2],2)
+net=neural_Network([2,2,1],2,0)
 
-net.train(0.1,0.001,[[1,2],[2,4],[4,5]],[0,0,0],10)
+
+print(net.networkStructure)
+
+
