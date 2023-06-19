@@ -1,6 +1,7 @@
 import numpy as np
-from neuralMath import Neural_Network_Math
 from NeuralGraph import *
+from queue import Queue
+
 
 class neural_Network:
      def __init__(self,networkStructure,mode,activationFunction):
@@ -11,6 +12,7 @@ class neural_Network:
           for i in range(1,len(networkStructure)):
                currentWeights=np.random.randn(networkStructure[i],networkStructure[i-1]+1)
                self.networkStructure.append(currentWeights) 
+
      def raw_Calculation(self,graph,input,index):
           network_params=Layer_Parameters(index,self.networkStructure[index])
           raw_output=Raw_Layer_Outputs(index+1)
@@ -54,34 +56,75 @@ class neural_Network:
                  graph.addNode(cross_loss,[labels_matrix,network_output])
                  return cross_loss
            
-     def feedForward(self,input,labels):
+     def feedForward(self,input,label):
             feed_graph=Neural_Graph()
             currentInputArray=Net_Inputs(0,input)               
             for i in range(0,len(self.networkStructure)-1):
                 raw_output=self.raw_Calculation(feed_graph,currentInputArray,i)                                                           
                 currentInputArray=self.activation_Calculation(feed_graph,raw_output,i)
             network_output=self.output_calculation(currentInputArray,feed_graph)
-            loss=self.loss_calculation(feed_graph,network_output,labels)
+            loss=self.loss_calculation(feed_graph,network_output,label)
             return (loss,feed_graph)
-     def train(self,learningRate,costThreshold,trainingBatch,labels,iterations):
-           lastCost=-1
-           for i in range(0,iterations):
-                 cache=[]
-                 for sample in trainingBatch:
-                        sampleOutPuts=self.feedForward(sample)
-                        cache.append(sampleOutPuts)
-                 batchOutPuts=self.extractOutputs(cache)  
-                 currentCost=self.calculateCost(batchOutPuts,labels)                       
-                 lastCost=currentCost
-                 print("Iteration number %d with cost = %f" % (i,lastCost))
-                 #backpropagate
-           return True
-         
 
+     def backpropagation(self,network_graph,root):
+           explored=set()
+           queue=Queue()
+           queue.put(root)
+           while not queue.empty():
+                 current=queue.get()
+                 if current not in explored:
+                       explored.add(current)    
+                       neighbors=network_graph.nodesMap[current]
+                       for neighbor in neighbors:
+                             current.backward_Pass(neighbors,neighbor)     
+                             if neighbor !="inp" and neighbor!="par":
+                                   queue.put(neighbors[neighbor])            
 
-net=neural_Network([2,2,1],2,0)
+     def one_batch_update(self,learning_rate,inputSet,labels):
+            list_of_graphs=[]   
+            loss_average=0   
+            for i in range(0,len(inputSet)):
+                  currentInput=inputSet[i]
+                  currentLabel=labels[i]
+                  root,graph=self.feedForward(currentInput,currentLabel)
+                  self.backpropagation(graph,root)
+                  list_of_graphs.append(graph)
+                  loss_average+=root.value
+            self.update_Parameters(list_of_graphs,learning_rate)
+            return  loss_average/len(inputSet)      
+     
 
+     def stochastic_gradient_descent(self,inputSet,labels,learning_rate):           
+            for i in range(0,len(inputSet)):
+                  currentInput=inputSet[i]
+                  currentLabel=labels[i]
+                  root,graph=self.feedForward(currentInput,currentLabel)
+                  self.backpropagation(graph,root)       
+                  self.update_Parameters(graph,learning_rate)
 
-print(net.networkStructure)
-
-
+     def update_Parameters(self,list_feed_graph,learning_rate):
+                  batch_size=len(list_feed_graph)
+                  for i in range(0,len(self.networkStructure)):
+                        step=0
+                        for j in range(0,batch_size):
+                              step+=list_feed_graph[j].get_parameters_gradient(i)
+                        self.networkStructure[i]= self.networkStructure[i]-learning_rate*(step/batch_size)   
+      
+     def batch_gradient_descent(self,learning_rate,batchSet,labels,loss_threshold,max_iterations):
+             previous_loss=self.one_batch_update(learning_rate,batchSet,labels)
+             converage=False
+             iteration=0
+             while not converage:                    
+                   current_loss=self.one_batch_update(learning_rate,batchSet,labels)
+                   if abs(current_loss-previous_loss)  < loss_threshold or iteration==max_iterations:
+                         converage=True              
+                   iteration+=1
+                   previous_loss=current_loss
+     
+                         
+                       
+# xor example
+net=neural_Network([2,2,1],0,1)  
+net.batch_gradient_descent(0.1,[[0,1],[1,0],[0,0],[1,1]],[1,1,0,0],0.00001,10000)
+loss,graph=net.feedForward([0,0],[0])
+print(graph.get_node(2,"raw"))

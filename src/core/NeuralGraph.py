@@ -12,9 +12,17 @@ class Neural_Graph:
                 self.nodesMap[parent][child.type]=child
                 if self.nodesMap.get(child) == None:
                     self.nodesMap[child]={}         
+    def get_parameters_gradient(self,layer):
+        for node in self.nodesMap:
+            if node.type=="par" and node.layer==layer: 
+                 return node.gradient     
+    def get_node(self,layer,type):
+        for node in self.nodesMap:
+            if node.layer==layer and node.type==type:              
+                   return node.value
     def showCase(self):
         for node in self.nodesMap:
-            print("layer :" ,node.layer , " type :",node.type , " value :", node.value , " gradient :" ,node.gradient)                    
+            print("layer :" ,node.layer , "type :",node.type , " value :", node.value , " gradient :" ,node.gradient,"\n")                    
 class Neuron:
     def __init__(self,layer,type):
         self.layer=layer
@@ -42,13 +50,13 @@ class Raw_Layer_Outputs(Neuron): # output of layer before applying the activatio
         input_with_bias=np.insert(layer_inputs.value,0,1,axis=0)
         self.value=np.dot(layer_weights.value,input_with_bias)   
 
-    def Backward_Pass(self,children_Map,derivationVariable):
-        layer_inputs=children_Map["inp"] if children_Map["inp"] != None else children_Map["rel"] if children_Map["rel"] !=None else children_Map["sop"]
+    def backward_Pass(self,children_Map,derivationVariable):
+        layer_inputs=children_Map["inp"] if "inp" in children_Map else children_Map["rel"] if "rel" in children_Map else children_Map["sop"]
         layer_params=children_Map["par"]
         if derivationVariable=="par":
             input_with_bias=np.insert(layer_inputs.value,0,1,axis=0)
             layer_params.gradient=np.dot(self.gradient,input_with_bias.transpose())
-        elif derivationVariable=="inp":
+        else:
             layer_inputs.gradient=np.dot(layer_params.value[:,1:].transpose(),self.gradient)             
 
 class ReLu_Matrix(Neuron):
@@ -136,13 +144,13 @@ class Cross_Entropy(Neuron):
       
       def backward_Pass(self,children_Map,derivationVariable):
            labels=children_Map["inp"]
-           network_outputs=children_Map["som"] if children_Map["som"] !=None else children_Map["sig"]
+           network_outputs=children_Map["som"] if "som" in children_Map else children_Map["sig"]
            if derivationVariable =="inp":
              local_gradient=-np.log(network_outputs.value)
-             network_outputs.gradient=np.multiply(self.gradient,local_gradient)
+             labels.gradient=np.multiply(self.gradient,local_gradient)
            else :
              log_derivative=network_outputs.value/np.power(network_outputs.value,2)
-             local_gradient=np.multiply(-log_derivative,labels)
+             local_gradient=np.multiply(-log_derivative,labels.value)
              network_outputs.gradient=np.multiply(self.gradient,local_gradient)
 
 
