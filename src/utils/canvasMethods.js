@@ -41,10 +41,10 @@ export function calculateTextSize(canvasHeight, numberOfNeurons) {
 	return Math.min((16 * (canvasHeight / numberOfNeurons)) / (586 / 10), 18);
 }
 
-export function delayToDrawNeuron(settings) {
+export function delayToDrawNeuron(duration, settings, layerNeuronNumber) {
 	let currentTime = new Date().getTime();
 	let delay = currentTime - settings.lastAnimateTime;
-	if (delay < settings.duration) return false;
+	if (delay < duration / layerNeuronNumber) return false;
 	settings.lastAnimateTime = currentTime;
 	return true;
 }

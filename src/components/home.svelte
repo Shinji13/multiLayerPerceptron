@@ -1,5 +1,6 @@
 <script>
 	import NetworkConstructor from './networkConstructor.svelte';
+	import { goto } from '$app/navigation';
 </script>
 
 <div id="home">
@@ -13,10 +14,14 @@
 				construct neuron networks with custom settings and then train them with csv files to get
 				appropriate weights
 			</p>
-			<button>Get Started <i class="fa-solid fa-arrow-right" /></button>
+			<button
+				on:click={() => {
+					goto('/workspace');
+				}}>Get Started <i class="fa-solid fa-arrow-right" /></button
+			>
 		</div>
 		<div class="right-side">
-			<NetworkConstructor edgeColor={'#612458'} />
+			<NetworkConstructor duration={150} arrowAnimationSteps={40} />
 		</div>
 	</div>
 </div>
@@ -172,9 +177,9 @@
 					font-family: 'Source Sans Pro', sans-serif;
 					font-size: var(--font-sizeRegular);
 					font-weight: bold;
-					color: var(--primary-color);
-					cursor: pointer;
 					z-index: 2;
+					cursor: pointer;
+					color: var(--primary-color);
 					background-color: transparent;
 					border-radius: 24px;
 					border: 2px solid var(--network-color);

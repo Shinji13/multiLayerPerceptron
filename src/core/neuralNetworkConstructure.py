@@ -5,7 +5,7 @@ from queue import Queue
 
 class neural_Network:
      def __init__(self,networkStructure,mode,activationFunction):
-          # mode is either multilabel-classification , unique-classification or regression ## activation is either sigmoid or Relu
+          # mode is either multilabel-classification , unique-classification or regression ## activation is either softplus or Relu
           self.activationFunction=activationFunction
           self.mode=mode
           self.networkStructure=[]
@@ -36,7 +36,7 @@ class neural_Network:
                  sig.forward_Pass(raw)
                  graph.addNode(sig,[raw])
                  return sig
-           else:
+           elif self.mode==2:
                  softmax=Softmax_matrix(layer+1)
                  softmax.forward_Pass(raw)
                  graph.addNode(softmax,[raw])
@@ -123,8 +123,11 @@ class neural_Network:
      
                          
                        
-# xor example
+# nonxor example be carefull use mode 0 (ssr with raw output) in case of regression and mdoe 1 cross-entropy and sigmoid in case of multi-label classification and mode 2 for multi-class classification with softmax and cross-entropy
 net=neural_Network([2,2,1],0,1)  
-net.batch_gradient_descent(0.1,[[0,1],[1,0],[0,0],[1,1]],[1,1,0,0],0.00001,10000)
-loss,graph=net.feedForward([0,0],[0])
-print(graph.get_node(2,"raw"))
+net.batch_gradient_descent(0.1,[[0,1],[1,0],[0,0],[1,1]],[0,0,1,1],0.00001,10000)
+loss,graph=net.feedForward([1,0],[0])
+loss,graph2=net.feedForward([0,0],[1])
+loss,graph3=net.feedForward([0,1],[0])
+loss,graph4=net.feedForward([1,1],[1])
+print(graph.get_node(2,"raw"),graph2.get_node(2,"raw"),graph3.get_node(2,"raw"),graph4.get_node(2,"raw"))

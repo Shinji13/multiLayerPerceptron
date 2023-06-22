@@ -30,12 +30,13 @@
 			strokeColor: 'white'
 		}
 	];
+	export let arrowAnimationSteps = 40;
+	export let duration = 150;
+
 	let settings = {
 		canvas: null,
 		context: null,
-		lastAnimateTime: 0,
-		arrowAnimationSteps: 50,
-		duration: 150
+		lastAnimateTime: 0
 	};
 	let edgesPositions = [];
 	let currentDrawnLayer = 0;
@@ -43,10 +44,10 @@
 
 	onMount(() => {
 		settings.lastAnimateTime = new Date().getTime();
+		settings.context = settings.canvas.getContext('2d');
 		settings.canvas.width = settings.canvas.offsetWidth;
 		settings.canvas.height = settings.canvas.offsetHeight;
-		settings.context = settings.canvas.getContext('2d');
-		let layerWidth = settings.canvas.width / networkLayers.length;
+		let layerWidth = settings.canvas.width / (networkLayers.length * 1.3);
 		networkLayers = networkLayers.map((layer, index) => {
 			let startingX = layerWidth * index + layerWidth / 2;
 			let radius = calculateNeuronRadius(settings.canvas.height, layer.neuronsNumber);
@@ -65,13 +66,6 @@
 		});
 		draw();
 	});
-
-	export function onResize() {
-		settings.canvas.width = settings.canvas.offsetWidth;
-		settings.canvas.height = settings.canvas.offsetHeight;
-		animate();
-	}
-
 	export function animate() {
 		settings.context.clearRect(0, 0, settings.canvas.width, settings.canvas.height);
 		currentDrawnLayer = 0;
@@ -82,7 +76,8 @@
 	function draw() {
 		if (edgesPositions.length == 0) {
 			if (currentDrawnLayer == networkLayers.length) return;
-			if (delayToDrawNeuron(settings)) drawNeurons();
+			if (delayToDrawNeuron(duration, settings, networkLayers[currentDrawnLayer].neuronsNumber))
+				drawNeurons();
 		} else {
 			drawEges();
 		}
@@ -124,8 +119,8 @@
 					neuronWeights[i]
 				);
 				drawLine(settings.context, start, neuronWeights[i], edgeColor, 1.5);
-				let deltaX = (target.x - start.x) / settings.arrowAnimationSteps;
-				let deltaY = (target.y - start.y) / settings.arrowAnimationSteps;
+				let deltaX = (target.x - start.x) / arrowAnimationSteps;
+				let deltaY = (target.y - start.y) / arrowAnimationSteps;
 				neuronWeights[i].x += deltaX;
 				neuronWeights[i].y += deltaY;
 			}
