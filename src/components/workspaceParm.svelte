@@ -1,5 +1,7 @@
 <script>
-	import { networkParameters } from '../utils/svelteStore';
+	import { networkParameters, networkStructure } from '../utils/svelteStore';
+	import { goto } from '$app/navigation';
+
 	let activationFunction = 0;
 	let mode = 0;
 </script>
@@ -24,10 +26,16 @@
 		</div>
 		<button
 			on:click={() => {
+				if (mode == 0) {
+					let lastLayer = $networkStructure.length - 1;
+					$networkStructure[lastLayer].neuronsNumber = 1;
+				}
 				networkParameters.set({
 					activationFunction,
 					mode
 				});
+				// send post request to create the network
+				goto('/train');
 			}}>Create</button
 		>
 	</div>
@@ -52,51 +60,6 @@
 			align-items: center;
 			gap: 8vw;
 			padding-left: 2vw;
-
-			& button {
-				width: fit-content;
-				height: fit-content;
-				padding-block: 0.3rem;
-				padding-inline: 2.5rem;
-				display: flex;
-				align-items: center;
-				justify-content: space-evenly;
-				position: relative;
-				font-family: 'Source Sans Pro', sans-serif;
-				font-size: var(--font-sizeRegular);
-				font-weight: bold;
-				z-index: 2;
-				cursor: pointer;
-				color: var(--primary-color);
-				background-color: transparent;
-				border-radius: 24px;
-				border: 2px solid var(--network-color);
-				overflow: hidden;
-
-				&:hover {
-					& i {
-						color: var(--network-color);
-					}
-					border-color: var(--network-color);
-					color: var(--network-color);
-					&::before {
-						width: 100%;
-					}
-				}
-				&::before {
-					content: '';
-					display: inline-block;
-					width: 0;
-					height: 100%;
-					position: absolute;
-					left: 0;
-					top: 0;
-					transition: all 300ms 0s ease;
-					background-color: var(--primary-color);
-					border-radius: 0.5px;
-					z-index: -1;
-				}
-			}
 
 			& div {
 				display: flex;

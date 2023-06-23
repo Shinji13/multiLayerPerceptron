@@ -47,7 +47,7 @@
 		settings.context = settings.canvas.getContext('2d');
 		settings.canvas.width = settings.canvas.offsetWidth;
 		settings.canvas.height = settings.canvas.offsetHeight;
-		let layerWidth = settings.canvas.width / (networkLayers.length * 1.3);
+		let layerWidth = settings.canvas.width / (networkLayers.length * 1.2);
 		networkLayers = networkLayers.map((layer, index) => {
 			let startingX = layerWidth * index + layerWidth / 2;
 			let radius = calculateNeuronRadius(settings.canvas.height, layer.neuronsNumber);

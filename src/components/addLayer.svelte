@@ -1,6 +1,6 @@
 <script>
 	import { networkStructure } from '../utils/svelteStore';
-	let neuronsNumber = 0;
+	let neuronsNumber = 1;
 	let strokeColor = '#ffffff';
 	let lineColorFrom = '#000000';
 	let lineColorTo = '#ffffff';
@@ -25,7 +25,7 @@
 		<select name="remove" id="remove" bind:value={removedItem}>
 			<option value={-1} disabled selected>Select a layer</option>
 			{#each $networkStructure as layer, index}
-				<option value={index}>{index}</option>
+				<option value={index}>{index + 1}</option>
 			{/each}
 		</select>
 	</div>
@@ -38,23 +38,23 @@
 			</div>
 			<div>
 				<span>Stroke color</span>
-				<input id="strokeColor" type="color" max="50" bind:value={strokeColor} class="color" />
+				<input id="strokeColor" type="color" bind:value={strokeColor} class="color" />
 			</div>
 			<div>
 				<span>Line first color</span>
 
-				<input id="EdgeColorOne" type="color" max="50" bind:value={lineColorFrom} class="color" />
+				<input id="EdgeColorOne" type="color" bind:value={lineColorFrom} class="color" />
 			</div>
 			<div>
 				<span>Line second color</span>
-				<input id="EdgeColorTwo" type="color" max="50" bind:value={lineColorTo} class="color" />
+				<input id="EdgeColorTwo" type="color" bind:value={lineColorTo} class="color" />
 			</div>
 			<button
 				on:click={() => {
 					if ($networkStructure.length < 8) {
 						let newLayer = {
 							color: '#161616',
-							neuronsNumber: Math.min([50, Math.max([1, neuronsNumber])]),
+							neuronsNumber: Math.min(50, Math.max(1, neuronsNumber)),
 							strokeColor: strokeColor,
 							lineColors: [lineColorFrom, lineColorTo]
 						};
@@ -155,14 +155,13 @@
 					}
 
 					& .number {
-						width: 40%;
-						height: 2rem;
-						border-radius: 24px;
-						background-color: var(--primary-color);
+						width: 4rem;
+						background-color: transparent;
 						border: none;
-						color: var(--secondary-color);
+						border-bottom: 2px solid var(--secondary-color);
+						color: var(--primary-color);
 						outline: none;
-						padding-left: 0.5rem;
+						padding-left: 0.2rem;
 						&::-webkit-outer-spin-button,
 						&::-webkit-inner-spin-button {
 							-webkit-appearance: none;
@@ -175,56 +174,14 @@
 						border-radius: 50%;
 						border: none;
 						background-color: transparent;
+						border: 2px solid var(--primary-color);
+						padding: 2px;
 
 						&::-webkit-color-swatch {
-							border: 3px solid var(--primary-color);
+							border: 1px solid var(--primary-color);
 							border-radius: 50%;
 						}
 					}
-				}
-			}
-			& button {
-				width: fit-content;
-				height: fit-content;
-				padding-block: 0.3rem;
-				padding-inline: 2.5rem;
-				display: flex;
-				align-items: center;
-				justify-content: space-evenly;
-				position: relative;
-				font-family: 'Source Sans Pro', sans-serif;
-				font-size: var(--font-sizeRegular);
-				font-weight: bold;
-				z-index: 2;
-				cursor: pointer;
-				color: var(--primary-color);
-				background-color: transparent;
-				border-radius: 24px;
-				border: 2px solid var(--network-color);
-				overflow: hidden;
-
-				&:hover {
-					& i {
-						color: var(--network-color);
-					}
-					border-color: var(--network-color);
-					color: var(--network-color);
-					&::before {
-						width: 100%;
-					}
-				}
-				&::before {
-					content: '';
-					display: inline-block;
-					width: 0;
-					height: 100%;
-					position: absolute;
-					left: 0;
-					top: 0;
-					transition: all 300ms 0s ease;
-					background-color: var(--primary-color);
-					border-radius: 0.5px;
-					z-index: -1;
 				}
 			}
 		}

@@ -16,7 +16,7 @@
 			</p>
 			<button
 				on:click={() => {
-					goto('/workspace');
+					goto('/construct');
 				}}>Get Started <i class="fa-solid fa-arrow-right" /></button
 			>
 		</div>
@@ -166,50 +166,12 @@
 					font-size: var(--font-sizeRegular);
 					font-weight: 400;
 				}
-
-				& button {
-					width: 10rem;
-					height: 3rem;
-					display: flex;
-					align-items: center;
-					justify-content: space-evenly;
-					position: relative;
-					font-family: 'Source Sans Pro', sans-serif;
-					font-size: var(--font-sizeRegular);
-					font-weight: bold;
-					z-index: 2;
-					cursor: pointer;
-					color: var(--primary-color);
-					background-color: transparent;
-					border-radius: 24px;
-					border: 2px solid var(--network-color);
-					overflow: hidden;
-
-					&:hover {
-						& i {
-							color: var(--network-color);
-						}
-						border-color: var(--network-color);
-						color: var(--network-color);
-						&::before {
-							width: 100%;
-						}
-					}
-					&::before {
-						content: '';
-						display: inline-block;
-						width: 0;
-						height: 100%;
-						position: absolute;
-						left: 0;
-						top: 0;
-						transition: all 300ms 0s ease;
-						background-color: var(--primary-color);
-						border-radius: 0.5px;
-						z-index: -1;
-					}
-				}
 			}
+		}
+		& button {
+			gap: 40px;
+			padding-inline: 1rem;
+			padding-block: 0.5rem;
 		}
 	}
 </style>

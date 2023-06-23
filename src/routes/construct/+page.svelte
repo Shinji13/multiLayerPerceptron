@@ -6,7 +6,10 @@
 </script>
 
 <div id="workspace">
-	<h1>Create your neural network</h1>
+	<div>
+		<h1>Create your neural network</h1>
+		<span>(maximuim eight layers with fifty neurons each)</span>
+	</div>
 	<div>
 		<div>
 			{#key $networkStructure}
@@ -33,11 +36,23 @@
 		gap: 30px;
 		background-color: var(--bg-color);
 
-		& > h1 {
-			color: var(--primary-color);
-			font-family: 'Montserrat', sans-serif;
-			font-size: var(--font-sizeBig);
-			font-weight: bolder;
+		& > div:first-child {
+			display: flex;
+			gap: 20px;
+			align-items: center;
+
+			& span {
+				color: var(--text-color);
+				font-family: 'Source Sans Pro', sans-serif;
+				font-size: var(--font-sizeSmall);
+			}
+
+			& h1 {
+				color: var(--primary-color);
+				font-family: 'Montserrat', sans-serif;
+				font-size: var(--font-sizeBig);
+				font-weight: bolder;
+			}
 		}
 
 		& div:nth-child(2) {
