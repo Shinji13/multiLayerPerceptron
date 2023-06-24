@@ -2,8 +2,11 @@
 	import NetworkConstructor from '../../components/networkConstructor.svelte';
 	import { networkStructure } from '../../utils/svelteStore';
 	import { goto } from '$app/navigation';
-	let max_iter = 10000;
+	import { user_id } from '../../utils/svelteStore';
+	import axios from 'axios';
+	let max_iter = 1000;
 	let accuarcy = 0.0001;
+	let trainingFile = null;
 </script>
 
 <div id="train">
@@ -29,14 +32,32 @@
 			<input type="number" bind:value={accuarcy} />
 		</div>
 		<div>
-			<label for="training_set">Upload training data</label>
-			<input id="training_set" type="file" />
+			<label for="training_set"
+				>{trainingFile != null ? trainingFile.name : 'Upload training data'}</label
+			>
+			<input
+				id="training_set"
+				type="file"
+				accept=".csv"
+				on:change={(evt) => {
+					trainingFile = evt.target.files[0];
+				}}
+			/>
 		</div>
 		<button
-			on:click={() => {
-				// check inputs
-				// send the req
-				// w8 for res
+			on:click={async () => {
+				if (trainingFile == null) return;
+				let formData = new FormData();
+				accuarcy = Math.max(0.00001, Math.min(0.1, accuarcy));
+				max_iter = Math.min(10000, max_iter);
+				formData.append('max_iterations', max_iter.toString());
+				formData.append('accuracy', accuarcy.toString());
+				formData.append('training_file', trainingFile);
+				await axios.post(`/api/train/${$user_id}`, formData, {
+					headers: {
+						'Content-Type': 'multipart/form-data'
+					}
+				});
 				goto('/test');
 			}}>Train</button
 		>
@@ -123,7 +144,7 @@
 					color: var(--primary-color);
 					background-color: var(--secondary-color);
 					font-family: 'Montserrat', sans-serif;
-					font-size: var(--font-sizeRegular);
+					font-size: var(--font-sizeSmall);
 					font-weight: 600;
 					border-radius: 16px;
 					padding-block: 0.3rem;

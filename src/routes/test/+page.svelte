@@ -112,8 +112,8 @@
 					color: var(--primary-color);
 					background-color: var(--secondary-color);
 					font-family: 'Montserrat', sans-serif;
-					font-size: var(--font-sizeRegular);
-					font-weight: 500;
+					font-size: var(--font-sizeSmall);
+					font-weight: 600;
 					border-radius: 16px;
 					padding-block: 0.3rem;
 					padding-inline: 1rem;

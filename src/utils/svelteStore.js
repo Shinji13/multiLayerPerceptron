@@ -1,4 +1,5 @@
-import { writable } from 'svelte/store';
+import { readable, writable } from 'svelte/store';
+import { nanoid } from 'nanoid';
 
 export const networkStructure = new writable([
 	{
@@ -21,7 +22,4 @@ export const networkStructure = new writable([
 	}
 ]);
 
-export const networkParameters = new writable({
-	activationFunction: 0,
-	mode: 0
-});
+export const user_id = new readable(nanoid());

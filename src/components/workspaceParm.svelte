@@ -1,6 +1,8 @@
 <script>
-	import { networkParameters, networkStructure } from '../utils/svelteStore';
+	import { networkStructure, user_id } from '../utils/svelteStore';
 	import { goto } from '$app/navigation';
+	import axios from 'axios';
+	import { tick } from 'svelte';
 
 	let activationFunction = 0;
 	let mode = 0;
@@ -25,16 +27,18 @@
 			</select>
 		</div>
 		<button
-			on:click={() => {
+			on:click={async () => {
 				if (mode == 0) {
 					let lastLayer = $networkStructure.length - 1;
 					$networkStructure[lastLayer].neuronsNumber = 1;
+					await tick();
 				}
-				networkParameters.set({
+				let body = {
+					layers: $networkStructure.map((ly) => ly.neuronsNumber),
 					activationFunction,
 					mode
-				});
-				// send post request to create the network
+				};
+				await axios.post(`/api/construct/${$user_id}`, body);
 				goto('/train');
 			}}>Create</button
 		>

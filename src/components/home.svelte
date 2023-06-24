@@ -21,7 +21,7 @@
 			>
 		</div>
 		<div class="right-side">
-			<NetworkConstructor duration={150} arrowAnimationSteps={40} />
+			<NetworkConstructor duration={1000} arrowAnimationSteps={40} />
 		</div>
 	</div>
 </div>
@@ -60,20 +60,6 @@
 				color: var(--text-color);
 				margin-right: 10vw;
 				gap: 5vw;
-
-				& ul {
-					display: flex;
-					align-items: center;
-					gap: 16px;
-
-					& li {
-						cursor: pointer;
-					}
-
-					& li:hover {
-						color: var(--primary-color);
-					}
-				}
 
 				& button {
 					width: 8rem;
