@@ -12,6 +12,8 @@ class neural_Network:
           for i in range(1,len(networkStructure)):
                currentWeights=np.random.randn(networkStructure[i],networkStructure[i-1]+1)
                self.networkStructure.append(currentWeights) 
+     def getNetworkTrainingSize(self) :
+           return (self.networkStructure[0].shape[1] - 1 , self.networkStructure[-1].shape[0])            
 
      def raw_Calculation(self,graph,input,index):
           network_params=Layer_Parameters(index,self.networkStructure[index])
@@ -125,7 +127,7 @@ class neural_Network:
                        
 # nonxor example be carefull use mode 0 (ssr with raw output) in case of regression and mdoe 1 cross-entropy and sigmoid in case of multi-label classification and mode 2 for multi-class classification with softmax and cross-entropy
 net=neural_Network([2,2,1],0,1)  
-net.batch_gradient_descent(0.1,[[0,1],[1,0],[0,0],[1,1]],[0,0,1,1],0.00001,10000)
+net.batch_gradient_descent(0.1,np.array([[0,1],[1,0],[0,0],[1,1]]),[0,0,1,1],0.00001,10000)
 loss,graph=net.feedForward([1,0],[0])
 loss,graph2=net.feedForward([0,0],[1])
 loss,graph3=net.feedForward([0,1],[0])

@@ -1,0 +1,1 @@
+print(graph.get_node(2,"raw"),graph2.get_node(2,"raw"),graph3.get_node(2,"raw"),graph4.get_node(2,"raw"))

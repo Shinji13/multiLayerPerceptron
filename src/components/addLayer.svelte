@@ -4,25 +4,27 @@
 	let strokeColor = '#ffffff';
 	let lineColorFrom = '#000000';
 	let lineColorTo = '#ffffff';
-	let removedItem = -1;
-	$: {
-		if (removedItem !== -1)
-			networkStructure.update((prev) => {
-				if (networkStructure.length == 1) {
-					prev.pop();
-				} else {
-					prev.splice(removedItem, 1);
-				}
-				return prev;
-			});
-	}
 </script>
 
 <div id="layers">
 	<h2>Customise Network layers</h2>
 	<div>
 		<span>Remove Layer</span>
-		<select name="remove" id="remove" bind:value={removedItem}>
+		<select
+			name="remove"
+			id="remove"
+			on:change={(evt) => {
+				networkStructure.update((prev) => {
+					if (networkStructure.length == 1) {
+						prev.pop();
+					} else {
+						prev.splice(evt.currentTarget.value, 1);
+					}
+					return prev;
+				});
+				evt.currentTarget.value = -1;
+			}}
+		>
 			<option value={-1} disabled selected>Select a layer</option>
 			{#each $networkStructure as layer, index}
 				<option value={index}>{index + 1}</option>
