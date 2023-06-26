@@ -4,19 +4,19 @@ import { nanoid } from 'nanoid';
 export const networkStructure = new writable([
 	{
 		color: '#161616',
-		neuronsNumber: 6,
+		neuronsNumber: 2,
 		strokeColor: 'white',
 		lineColors: ['#612458', 'white']
 	},
 	{
 		color: '#161616',
-		neuronsNumber: 5,
+		neuronsNumber: 2,
 		strokeColor: 'white',
 		lineColors: ['#bbc3ff', '#1352b8']
 	},
 	{
 		color: '#161616',
-		neuronsNumber: 3,
+		neuronsNumber: 1,
 		strokeColor: 'white',
 		lineColors: ['#bbc3ff', '#1352b8']
 	}

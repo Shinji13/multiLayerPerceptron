@@ -31,6 +31,8 @@ class Neuron:
         self.gradient=1
     def __hash__(self):
         return hash(self.type) ^ hash(self.layer)   
+    def getValuesAsArray(self):
+        return np.ravel(self.value)
     
 class Net_Inputs(Neuron):
     def __init__(self,layer,inputArray):

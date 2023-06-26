@@ -1,9 +1,37 @@
 <script>
 	import NetworkConstructor from '../../components/networkConstructor.svelte';
-	import { networkStructure } from '../../utils/svelteStore';
+	import Loading from '../../components/loading.svelte';
+	import axios from 'axios';
+	import { networkStructure, user_id } from '../../utils/svelteStore';
 	import { goto } from '$app/navigation';
+
+	let test_name = 'Xi';
+	let test_file = null;
+	let loading = false;
+	let errorMessage = '';
+
+	const handleTest = async () => {
+		let fd = new FormData();
+		fd.append('testing_file', test_file);
+		loading = true;
+		await axios
+			.post(`/api/test/${$user_id}`, fd, {
+				headers: {
+					'Content-Type': 'multipart/form-data'
+				}
+			})
+			.then(() => {
+				loading = false;
+			})
+			.catch((err) => {
+				loading = false;
+				if (err.response.status == 400)
+					errorMessage = `Invalid test data it should be in form of n row and ${$networkStructure[0].neuronsNumber} columns`;
+			});
+	};
 </script>
 
+<!-- svelte-ignore missing-declaration -->
 <div id="test">
 	<section>
 		<h1>Test your network</h1>
@@ -19,29 +47,41 @@
 	</section>
 	<section>
 		<div>
-			<label for="resualts">Download training resualts</label>
+			<span>Current testing name</span>
+			<input type="text" bind:value={test_name} />
+		</div>
+		<div>
+			<label for="resualts">Download resualts</label>
 			<input id="resualts" type="file" />
 		</div>
 		<div>
-			<label for="testing_set">Upload testing data</label>
-			<input id="testing_set" type="file" />
+			<label for="testing_set">{test_file != null ? test_file.name : 'Upload test data'}</label>
+			<input
+				id="testing_set"
+				type="file"
+				accept=".csv"
+				on:change={(evt) => {
+					test_file = evt.target.files[0];
+				}}
+			/>
 		</div>
-		<button
-			on:click={() => {
-				// check inputs
-				// send the req
-				// w8 for res
-			}}>Test</button
-		>
+		<button on:click={handleTest}>Test</button>
 	</section>
 	<section>
-		<span
-			>--Training file need to be a csv file where each row respresent a sample of input for the
-			network.</span
-		>
-		<span
-			>--The resualts contains the adjusted weights and biases for each layer of your network.</span
-		>
+		{#if loading}
+			<Loading />
+		{:else if errorMessage == ''}
+			<span
+				>--Results are weights and biases of the network after the training along side the outcome
+				of testing samples if any exist all.</span
+			>
+			<span
+				>--The testing file need to contain rows of testing samples where each one contain the
+				values of input layer neurons</span
+			>
+		{:else}
+			<span class="error">{errorMessage}</span>
+		{/if}
 	</section>
 </div>
 
@@ -120,6 +160,22 @@
 					cursor: pointer;
 				}
 			}
+			& div:first-child {
+				& input {
+					display: inline-block;
+					width: 4rem;
+					background-color: transparent;
+					border: none;
+					border-bottom: 2px solid var(--secondary-color);
+					color: var(--primary-color);
+					outline: none;
+					padding-left: 0.2rem;
+					&::-webkit-outer-spin-button,
+					&::-webkit-inner-spin-button {
+						-webkit-appearance: none;
+					}
+				}
+			}
 
 			& div {
 				display: flex;
@@ -147,6 +203,7 @@
 
 			& span {
 				color: var(--text-color);
+				font-family: 'Source Sans Pro', sans-serif;
 				font-weight: 400;
 				font-size: var(--font-sizeSmall);
 			}

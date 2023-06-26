@@ -22,8 +22,8 @@
 			<span>Operation mode</span>
 			<select name="mode" id="mode" bind:value={mode}>
 				<option value={0}>Regression</option>
-				<option value={1}>multiClass Classification</option>
-				<option value={2}>multiLable Classification</option>
+				<option value={1}>multiLable Classification</option>
+				<option value={2}>multiClass Classification</option>
 			</select>
 		</div>
 		<button

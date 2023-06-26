@@ -86,16 +86,13 @@ class neural_Network:
             list_of_graphs=[]   
             loss_average=0   
             for i in range(0,len(inputSet)):
-                  currentInput=inputSet[i]
-                  currentLabel=labels[i]
-                  root,graph=self.feedForward(currentInput,currentLabel)
+                  root,graph=self.feedForward(inputSet[i],labels[i])
                   self.backpropagation(graph,root)
                   list_of_graphs.append(graph)
                   loss_average+=root.value
             self.update_Parameters(list_of_graphs,learning_rate)
             return  loss_average/len(inputSet)      
      
-
      def stochastic_gradient_descent(self,inputSet,labels,learning_rate):           
             for i in range(0,len(inputSet)):
                   currentInput=inputSet[i]
@@ -123,13 +120,19 @@ class neural_Network:
                    iteration+=1
                    previous_loss=current_loss
      
-                         
-                       
-# nonxor example be carefull use mode 0 (ssr with raw output) in case of regression and mdoe 1 cross-entropy and sigmoid in case of multi-label classification and mode 2 for multi-class classification with softmax and cross-entropy
-net=neural_Network([2,2,1],0,1)  
-net.batch_gradient_descent(0.1,np.array([[0,1],[1,0],[0,0],[1,1]]),[0,0,1,1],0.00001,10000)
-loss,graph=net.feedForward([1,0],[0])
-loss,graph2=net.feedForward([0,0],[1])
-loss,graph3=net.feedForward([0,1],[0])
-loss,graph4=net.feedForward([1,1],[1])
-print(graph.get_node(2,"raw"),graph2.get_node(2,"raw"),graph3.get_node(2,"raw"),graph4.get_node(2,"raw"))
+     def test(self,inputs):
+           test_results=[]
+           for row in inputs:
+              feed_graph=Neural_Graph()
+              currentInputArray=Net_Inputs(0,row)               
+              for i in range(0,len(self.networkStructure)-1):
+                raw_output=self.raw_Calculation(feed_graph,currentInputArray,i)                                                           
+                currentInputArray=self.activation_Calculation(feed_graph,raw_output,i)
+              network_output=self.output_calculation(currentInputArray,feed_graph)
+              test_results.append((row,network_output.value))
+           return test_results
+     
+
+
+
+                                                                                                    

@@ -4,22 +4,25 @@
 	import { goto } from '$app/navigation';
 	import { user_id } from '../../utils/svelteStore';
 	import axios from 'axios';
+	import Loading from '../../components/loading.svelte';
 	let max_iter = 1000;
 	let accuarcy = 0.0001;
 	let trainingFile = null;
 	let learning_rate = 0.1;
+	let loading = false;
 	let errorMessage = '';
 
 	const handleTrain = async () => {
 		if (trainingFile == null) return;
 		let formData = new FormData();
 		accuarcy = Math.max(0.00001, Math.min(0.1, accuarcy));
-		max_iter = Math.min(10000, max_iter);
+		max_iter = Math.min(100000, max_iter);
 		learning_rate = Math.min(1, Math.max(0.00000000001, learning_rate));
 		formData.append('max_iterations', max_iter.toString());
 		formData.append('accuracy', accuarcy.toString());
 		formData.append('learning_rate', learning_rate.toString());
 		formData.append('training_file', trainingFile);
+		loading = true;
 		await axios
 			.post(`/api/train/${$user_id}`, formData, {
 				headers: {
@@ -27,15 +30,17 @@
 				}
 			})
 			.then(() => {
+				loading = false;
 				goto('/test');
 			})
 			.catch((err) => {
+				loading = false;
 				if (err.response.status == 400)
 					errorMessage = `Invalid training data it should be in form of n row and ${
 						$networkStructure[0].neuronsNumber + $networkStructure.at(-1).neuronsNumber
 					} columns first ${
 						$networkStructure[0].neuronsNumber
-					} represent neural network input and the rest  is its output ordered from top to bottom.`;
+					} represent neural network input and the rest is its output ordered from top to bottom.`;
 			});
 	};
 </script>
@@ -82,7 +87,9 @@
 		<button on:click={handleTrain}>Train</button>
 	</section>
 	<section>
-		{#if errorMessage == ''}
+		{#if loading}
+			<Loading />
+		{:else if errorMessage == ''}
 			<span
 				>--Accuracy represent the difference between two consecutive losses when we reach its value
 				we stop the training.</span
@@ -206,6 +213,7 @@
 
 			& span {
 				color: var(--text-color);
+				font-family: 'Source Sans Pro', sans-serif;
 				font-weight: 400;
 				font-size: var(--font-sizeSmall);
 			}
