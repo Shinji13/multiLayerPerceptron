@@ -1,0 +1,11 @@
+Weights are in form of wij in which i is the index of starting neuron from layer n and j is the index of ending neuron in layer n+1.
+Biases are in form of bk where k represents the index of neuron this bias belongs to.
+L0 to L1
+b0:-0.6920160725222448,b1:-0.002828464854043757,w00:0.8072862300972452,w01:0.18154762958711007,w10:1.3438462479794346,w11:0.7007196494642975
+L1 to L2
+b0:0.19002283312225118,w00:-0.5272027163063724,w10:0.8682822113428738
+Test results of file with the name: test.csv
+0.47623201337092
+0.5766819595643389
+0.5819063897062156
+0.3756059385581124

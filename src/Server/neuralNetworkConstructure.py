@@ -10,8 +10,10 @@ class neural_Network:
           self.mode=mode
           self.networkStructure=[]
           for i in range(1,len(networkStructure)):
-               currentWeights=np.random.randn(networkStructure[i],networkStructure[i-1]+1)
-               self.networkStructure.append(currentWeights) 
+               currentWeights=np.random.randn(networkStructure[i],networkStructure[i-1])
+               currentBiases=np.zeros((networkStructure[i],1))
+               currentParams=np.concatenate((currentBiases,currentWeights), axis=1)
+               self.networkStructure.append(currentParams) 
      def getNetworkTrainingSize(self) :
            return (self.networkStructure[0].shape[1] - 1 , self.networkStructure[-1].shape[0])            
 
@@ -86,12 +88,14 @@ class neural_Network:
             list_of_graphs=[]   
             loss_average=0   
             for i in range(0,len(inputSet)):
-                  root,graph=self.feedForward(inputSet[i],labels[i])
+                  currentInput=inputSet[i]
+                  currentLabel=labels[i]
+                  root,graph=self.feedForward(currentInput,currentLabel)
                   self.backpropagation(graph,root)
                   list_of_graphs.append(graph)
                   loss_average+=root.value
             self.update_Parameters(list_of_graphs,learning_rate)
-            return  loss_average/len(inputSet)      
+            return  loss_average/len(inputSet)
      
      def stochastic_gradient_descent(self,inputSet,labels,learning_rate):           
             for i in range(0,len(inputSet)):
@@ -99,7 +103,7 @@ class neural_Network:
                   currentLabel=labels[i]
                   root,graph=self.feedForward(currentInput,currentLabel)
                   self.backpropagation(graph,root)       
-                  self.update_Parameters(graph,learning_rate)
+                  self.update_Parameters([graph],learning_rate)
 
      def update_Parameters(self,list_feed_graph,learning_rate):
                   batch_size=len(list_feed_graph)
@@ -107,7 +111,7 @@ class neural_Network:
                         step=0
                         for j in range(0,batch_size):
                               step+=list_feed_graph[j].get_parameters_gradient(i)
-                        self.networkStructure[i]= self.networkStructure[i]-learning_rate*(step/batch_size)   
+                        self.networkStructure[i]= self.networkStructure[i]-learning_rate*(step/batch_size) 
       
      def batch_gradient_descent(self,learning_rate,batchSet,labels,loss_threshold,max_iterations):
              previous_loss=self.one_batch_update(learning_rate,batchSet,labels)
@@ -118,8 +122,7 @@ class neural_Network:
                    if abs(current_loss-previous_loss)  < loss_threshold or iteration==max_iterations:
                          converage=True              
                    iteration+=1
-                   previous_loss=current_loss
-     
+                   previous_loss=current_loss     
      def test(self,inputs):
            test_results=[]
            for row in inputs:
@@ -129,10 +132,7 @@ class neural_Network:
                 raw_output=self.raw_Calculation(feed_graph,currentInputArray,i)                                                           
                 currentInputArray=self.activation_Calculation(feed_graph,raw_output,i)
               network_output=self.output_calculation(currentInputArray,feed_graph)
-              test_results.append((row,network_output.value))
+              test_results.append(network_output.getValuesAsArray())
            return test_results
-     
 
 
-
-                                                                                                    

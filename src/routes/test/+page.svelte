@@ -51,8 +51,7 @@
 			<input type="text" bind:value={test_name} />
 		</div>
 		<div>
-			<label for="resualts">Download resualts</label>
-			<input id="resualts" type="file" />
+			<a href={`/res/${$user_id}.csv`} download="results.csv">Download results</a>
 		</div>
 		<div>
 			<label for="testing_set">{test_file != null ? test_file.name : 'Upload test data'}</label>
@@ -148,7 +147,8 @@
 				& input {
 					display: none;
 				}
-				& label {
+				& label,
+				& a {
 					color: var(--primary-color);
 					background-color: var(--secondary-color);
 					font-family: 'Montserrat', sans-serif;

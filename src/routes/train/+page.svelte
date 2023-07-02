@@ -6,7 +6,7 @@
 	import axios from 'axios';
 	import Loading from '../../components/loading.svelte';
 	let max_iter = 1000;
-	let accuarcy = 0.0001;
+	let accuarcy = 0.00001;
 	let trainingFile = null;
 	let learning_rate = 0.1;
 	let loading = false;
@@ -193,7 +193,8 @@
 			}
 
 			& input {
-				width: 4rem;
+				max-width: 6rem;
+				min-width: 4rem;
 				background-color: transparent;
 				border: none;
 				border-bottom: 2px solid var(--secondary-color);
